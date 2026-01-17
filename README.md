@@ -1,4 +1,4 @@
-# 3d-geometry-calculator-basic-
+# Visual geometrical calculator
 Geometrical calculator
 
 2D Shapes: area, perimeter, diagonal lengths, side ratios, and angles for triangles, rectangles, squares, polygons, and circles.
