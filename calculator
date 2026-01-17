@@ -1,0 +1,146 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon, Rectangle
+from mpl_toolkits.mplot3d import Axes3D
+
+def triangle_area(base, height):
+    return 0.5 * base * height
+
+def rectangle_area(width, height):
+    return width * height
+
+def rectangle_perimeter(width, height):
+    return 2 * (width + height)
+
+def square_area(side):
+    return side**2
+
+def square_perimeter(side):
+    return 4 * side
+
+def polygon_area(sides, radius):
+    angle = 2 * np.pi / sides
+    return 0.5 * sides * radius**2 * np.sin(angle)
+
+def polygon_perimeter(sides, radius):
+    side_length = 2 * radius * np.sin(np.pi / sides)
+    return sides * side_length
+
+def cylinder_volume(radius, height):
+    return np.pi * radius**2 * height
+
+def cylinder_surface(radius, height):
+    return 2 * np.pi * radius * (radius + height)
+
+def pyramid_volume(base_area, height):
+    return (1/3) * base_area * height
+
+def pyramid_surface(base_area, slant_height, perimeter):
+    return base_area + 0.5 * perimeter * slant_height
+
+def cone_volume(radius, height):
+    return (1/3) * np.pi * radius**2 * height
+
+def cone_surface(radius, height):
+    slant = np.sqrt(radius**2 + height**2)
+    return np.pi * radius * (radius + slant)
+
+def circle_area(radius):
+    return np.pi * radius**2
+
+def circle_circumference(radius):
+    return 2 * np.pi * radius
+
+def sphere_volume(radius):
+    return 4/3 * np.pi * radius**3
+
+def sphere_surface(radius):
+    return 4 * np.pi * radius**2
+
+def plot_polygon(sides, radius):
+    angles = np.linspace(0, 2*np.pi, sides, endpoint=False)
+    x = radius * np.cos(angles)
+    y = radius * np.sin(angles)
+    fig, ax = plt.subplots()
+    ax.add_patch(Polygon(list(zip(x, y)), edgecolor='blue', facecolor='lightblue', lw=2))
+    ax.set_aspect('equal'); ax.set_xlim(-radius-1, radius+1); ax.set_ylim(-radius-1, radius+1)
+    ax.set_title(f"Regular {sides}-gon")
+    plt.show()
+
+def plot_triangle(base, height):
+    x=[0, base, base/2]; y=[0,0,height]
+    fig, ax=plt.subplots(); ax.fill(x,y,color='lightgreen',edgecolor='green',lw=2)
+    ax.set_aspect('equal'); ax.set_xlim(-1,base+1); ax.set_ylim(-1,height+1)
+    ax.set_title(f"Triangle base={base}, height={height}"); plt.show()
+
+def plot_rectangle(width,height):
+    fig,ax=plt.subplots(); ax.add_patch(Rectangle((0,0),width,height,edgecolor='red',facecolor='lightcoral',lw=2))
+    ax.set_aspect('equal'); ax.set_xlim(-1,width+1); ax.set_ylim(-1,height+1)
+    ax.set_title(f"Rectangle width={width}, height={height}"); plt.show()
+
+def plot_cylinder(radius,height):
+    fig=plt.figure(); ax=fig.add_subplot(111,projection='3d')
+    z=np.linspace(0,height,100); theta=np.linspace(0,2*np.pi,100)
+    Z,T=np.meshgrid(z,theta); X=radius*np.cos(T); Y=radius*np.sin(T)
+    ax.plot_surface(X,Y,Z,color='lightblue',edgecolor='blue')
+    ax.set_title(f"Cylinder radius={radius}, height={height}"); plt.show()
+
+def plot_pyramid(base,height):
+    fig=plt.figure(); ax=fig.add_subplot(111,projection='3d')
+    top=np.array([0,0,height]); bottom=np.array([[base,base,0],[base,-base,0],[-base,-base,0],[-base,base,0]])
+    ax.plot_trisurf(bottom[:,0],bottom[:,1],[0,0,0,0],color='lightgreen')
+    ax.scatter([top[0]],[top[1]],[top[2]],color='red',s=50); ax.set_title(f"Pyramid base={base}, height={height}"); plt.show()
+
+def plot_cone(radius,height):
+    fig=plt.figure(); ax=fig.add_subplot(111,projection='3d')
+    z=np.linspace(0,height,100); theta=np.linspace(0,2*np.pi,100)
+    Z,T=np.meshgrid(z,theta); X=radius*(1-Z/height)*np.cos(T); Y=radius*(1-Z/height)*np.sin(T)
+    ax.plot_surface(X,Y,Z,color='lightcoral',edgecolor='red'); ax.set_title(f"Cone radius={radius}, height={height}"); plt.show()
+
+def plot_circle(radius):
+    fig,ax=plt.subplots(); ax.add_artist(plt.Circle((0,0),radius,color='lightblue',ec='blue',lw=2))
+    ax.set_aspect('equal'); ax.set_xlim(-radius-1,radius+1); ax.set_ylim(-radius-1,radius+1); ax.set_title(f"Circle radius={radius}"); plt.show()
+
+def plot_sphere(radius):
+    fig=plt.figure(); ax=fig.add_subplot(111,projection='3d')
+    u=np.linspace(0,2*np.pi,100); v=np.linspace(0,np.pi,100)
+    x=radius*np.outer(np.cos(u),np.sin(v)); y=radius*np.outer(np.sin(u),np.sin(v)); z=radius*np.outer(np.ones(np.size(u)),np.cos(v))
+    ax.plot_surface(x,y,z,color='lightgreen',edgecolor='green'); ax.set_title(f"Sphere radius={radius}"); plt.show()
+
+def advanced_metrics(shape_data):
+    if 'radius' in shape_data and 'height' in shape_data:
+        ratio = shape_data['height']/shape_data['radius']
+        diagonal = np.sqrt(shape_data['height']**2 + shape_data['radius']**2)
+        return ratio, diagonal
+    return None,None
+
+shape=input("Choose shape (triangle, rectangle, square, polygon, cylinder, pyramid, cone, circle, sphere):").lower()
+if shape=='triangle':
+    b=float(input("Triangle base: ")); h=float(input("Triangle height: "))
+    print(f"Area: {triangle_area(b,h):.2f}"); plot_triangle(b,h)
+elif shape=='rectangle':
+    w=float(input("Rectangle width: ")); h=float(input("Rectangle height: "))
+    print(f"Area: {rectangle_area(w,h):.2f}, Perimeter: {rectangle_perimeter(w,h):.2f}"); plot_rectangle(w,h)
+elif shape=='square':
+    s=float(input("Square side: "))
+    print(f"Area: {square_area(s):.2f}, Perimeter: {square_perimeter(s):.2f}"); plot_rectangle(s,s)
+elif shape=='polygon':
+    n=int(input("Number of sides: ")); r=float(input("Radius: "))
+    print(f"Area: {polygon_area(n,r):.2f}, Perimeter: {polygon_perimeter(n,r):.2f}"); plot_polygon(n,r)
+elif shape=='cylinder':
+    r=float(input("Cylinder radius: ")); h=float(input("Cylinder height: "))
+    print(f"Volume: {cylinder_volume(r,h):.2f}, Surface: {cylinder_surface(r,h):.2f}"); plot_cylinder(r,h); ratio, diag=advanced_metrics({'radius':r,'height':h}); print(f"Height/Radius ratio: {ratio:.2f}, Diagonal: {diag:.2f}")
+elif shape=='pyramid':
+    b_area=float(input("Pyramid base area: ")); h=float(input("Pyramid height: ")); sl=int(input("Pyramid slant height: ")); per=float(input("Pyramid perimeter: "))
+    print(f"Volume: {pyramid_volume(b_area,h):.2f}, Surface: {pyramid_surface(b_area,sl,per):.2f}"); plot_pyramid(b_area,h)
+elif shape=='cone':
+    r=float(input("Cone radius: ")); h=float(input("Cone height: "))
+    print(f"Volume: {cone_volume(r,h):.2f}, Surface: {cone_surface(r,h):.2f}"); plot_cone(r,h); ratio, diag=advanced_metrics({'radius':r,'height':h}); print(f"Height/Radius ratio: {ratio:.2f}, Slant: {diag:.2f}")
+elif shape=='circle':
+    r=float(input("Circle radius: "))
+    print(f"Area: {circle_area(r):.2f}, Circumference: {circle_circumference(r):.2f}"); plot_circle(r)
+elif shape=='sphere':
+    r=float(input("Sphere radius: "))
+    print(f"Volume: {sphere_volume(r):.2f}, Surface: {sphere_surface(r):.2f}"); plot_sphere(r)
+else:
+    print("Unknown shape")
